@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeoGenesis — Reactive Essay</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+  <style>
+    /* Text fade */
+    .fade-enter-active {
+      transition: opacity 1.2s ease, transform 1.2s ease;
+    }
+    .fade-enter-from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    /* Image morph */
+    .image-enter-active,
+    .image-leave-active {
+      transition: opacity 1s ease, transform 1s ease;
+      position: absolute;
+      inset: 0;
+    }
+    .image-enter-from {
+      opacity: 0;
+      transform: scale(1.03);
+    }
+    .image-leave-to {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+  </style>
+</head>
+
+<body class="bg-white text-neutral-900 antialiased">
+<div id="app" class="min-h-screen">
+
+  <main class="max-w-7xl mx-auto px-6 py-16 flex flex-col lg:flex-row gap-12">
+
+    <!-- IMAGE COLUMN -->
+    <div class="relative w-full lg:w-3/5">
+      <div class="relative aspect-[4/5] overflow-hidden rounded-lg">
+        <transition name="image" mode="out-in">
+          <img
+            :key="currentImage"
+            :src="currentImage"
+            class="w-full h-full object-cover"
+            alt="NeoGenesis photograph"
+          />
+        </transition>
+      </div>
+    </div>
+
+    <!-- TEXT COLUMN -->
+    <div class="w-full lg:w-2/5 flex flex-col justify-center">
+      <transition name="fade">
+        <div v-if="showText" class="space-y-6">
+
+          <h1 class="text-3xl font-semibold text-fuchsia-600">
+            NeoGenesis
+          </h1>
+
+          <blockquote class="border-l-2 border-fuchsia-400 pl-4 italic text-neutral-600">
+            “We know the world by what we see: through a window, in a frame, on a screen. — Anne Friedberg.”
+          </blockquote>
+
+          <div class="space-y-4 text-sm leading-relaxed text-neutral-800">
+
+            <p>
+              My concept for this project was under the umbrella of Simulacra as described by Jean Baudrillard.
+              This project explores the relationship between the human body and computerised technologies.
+              In a technologically attuned civilisation we are surrounded by computer technology which
+              augments the human body.
+            </p>
+
+            <p>
+              A human body with powers beyond its natural form serves as a prosthetic enhancement of its faculties.
+            </p>
+
+            <p>
+              This project explores concepts of “The Cyborg” as theorised by Donna Haraway and the implications
+              of computerised technology on human embodiment and subjectivity, and also seeks to understand
+              notions of human experience as mediated through technology.
+            </p>
+
+            <p>
+              I approached this project with the idea of attempting to depict the symbiotic relationship
+              between humans and technology, in particular “Cyborg Intentionality” as described by Don Ihde.
+            </p>
+
+            <p>
+              As our realities become ever more digital, and our experiences become simulated, what does
+              “real” even mean anymore and how does that affect our relationship with ourselves and each other?
+            </p>
+
+            <p>
+              Will we succumb to virtual reality as post-humans similar to the figures in the Wachowskis’
+              Matrix saga, or eschew the human body in favour of cybernetic super-enhancement as seen in
+              Ghost in the Shell and Deus Ex?
+            </p>
+
+          </div>
+
+          <button
+            @click="nextImage"
+            class="mt-6 inline-flex items-center gap-2 self-start rounded-full bg-fuchsia-600 px-6 py-3 text-white text-sm hover:bg-fuchsia-700 transition"
+          >
+            Next photograph →
+          </button>
+
+          <p class="text-xs text-neutral-400 pt-8">
+            © 2026 NeoGenesis. Built with Vue + Tailwind.
+          </p>
+
+        </div>
+      </transition>
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+const { createApp } = Vue
+
+createApp({
+  data() {
+    return {
+      showText: false,
+      images: [
+        'assets/neogenesis.jpg', // replace with your real paths
+        'assets/Mind_Body.jpg'
+      ],
+      index: 0
+    }
+  },
+  computed: {
+    currentImage() {
+      return this.images[this.index]
+    }
+  },
+  mounted() {
+    requestAnimationFrame(() => {
+      this.showText = true
+    })
+  },
+  methods: {
+    nextImage() {
+      this.index = (this.index + 1) % this.images.length
+    }
+  }
+}).mount('#app')
+</script>
+
+</body>
+</html>

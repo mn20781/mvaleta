@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeoGenesis</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+  <style>
+    /* Text fade */
+    .fade-enter-active {
+      transition: opacity 1.2s ease, transform 1.2s ease;
+    }
+    .fade-enter-from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    /* Image morph */
+    .image-enter-active,
+    .image-leave-active {
+      transition: opacity 1.2s ease, transform 1.2s ease;
+      position: absolute;
+      inset: 0;
+    }
+    .image-enter-from {
+      opacity: 0;
+      transform: scale(1.03);
+    }
+    .image-leave-to {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-[#05070f] via-[#070b18] to-[#02030a] text-neutral-200 antialiased">
+<div id="app" class="min-h-screen">
+
+  <main class="max-w-7xl mx-auto px-6 py-20 flex flex-col lg:flex-row gap-14">
+
+    <!-- IMAGE COLUMN -->
+    <div class="relative w-full lg:w-3/5">
+      <div
+        class="relative aspect-[16/9] overflow-hidden rounded-2xl
+               shadow-[0_0_60px_rgba(56,189,248,0.15)]
+               bg-white/5 backdrop-blur-sm">
+
+        <transition name="image" mode="out-in">
+          <img
+            :key="currentImage"
+            :src="currentImage"
+            class="w-full h-full object-cover"
+            alt="NeoGenesis photograph"
+          />
+        </transition>
+
+        <!-- subtle glass sheen -->
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent"></div>
+      </div>
+    </div>
+
+    <!-- TEXT COLUMN -->
+    <div class="w-full lg:w-2/5 flex flex-col justify-center">
+      <transition name="fade">
+        <div v-if="showText" class="space-y-7">
+
+          <h1 class="text-3xl font-medium tracking-wide text-cyan-300">
+            NeoGenesis
+          </h1>
+
+          <blockquote class="border-l border-cyan-400/40 pl-4 italic text-neutral-400">
+            “We know the world by what we see: through a window, in a frame, on a screen.”
+            <span class="block text-xs mt-2 text-neutral-500">— Anne Friedberg</span>
+          </blockquote>
+
+          <div class="space-y-4 text-sm leading-relaxed text-neutral-300">
+
+            <p>
+              My concept for this project was developed under the umbrella of Simulacra as described
+              by Jean Baudrillard, exploring the relationship between the human body and
+              computerised technologies.
+            </p>
+
+            <p>
+              In a technologically attuned civilisation, we are surrounded by systems that
+              augment, extend, and subtly reshape the human body.
+            </p>
+
+            <p>
+              Drawing on Donna Haraway’s concept of “The Cyborg”, the work reflects on how
+              embodiment, subjectivity, and experience are mediated through technological systems.
+            </p>
+
+            <p>
+              I approached this project as an attempt to visualise the symbiotic relationship
+              between humans and technology — particularly “Cyborg Intentionality” as described by
+              Don Ihde.
+            </p>
+
+            <p>
+              As realities become increasingly simulated, the boundary between real and virtual
+              grows porous, altering how we understand ourselves and each other.
+            </p>
+
+          </div>
+
+          <button
+            @click="nextImage"
+            class="mt-8 inline-flex items-center gap-2 self-start rounded-full
+                   border border-cyan-400/40
+                   px-6 py-3 text-sm text-cyan-200
+                   hover:bg-cyan-400/10 hover:border-cyan-300
+                   transition">
+            Next photograph →
+          </button>
+
+          <p class="text-xs text-neutral-500 pt-10">
+            © 2026 NeoGenesis
+          </p>
+
+        </div>
+      </transition>
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+const { createApp } = Vue
+
+createApp({
+  data() {
+    return {
+      showText: false,
+      images: [
+        'assets/neogenesis.jpg',
+        'assets/Mind_Body.jpg'
+      ],
+      index: 0
+    }
+  },
+  computed: {
+    currentImage() {
+      return this.images[this.index]
+    }
+  },
+  mounted() {
+    requestAnimationFrame(() => {
+      this.showText = true
+    })
+  },
+  methods: {
+    nextImage() {
+      this.index = (this.index + 1) % this.images.length
+    }
+  }
+}).mount('#app')
+</script>
+
+</body>
+</html>

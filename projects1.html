@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeoGenesis — Reactive Essay</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <style>
+    .fade-enter-active, .fade-leave-active { transition: opacity 1s ease; }
+    .fade-enter-from, .fade-leave-to { opacity: 0; }
+    .measure { max-width: 65ch }
+  </style>
+</head>
+<body class="bg-white text-neutral-900 antialiased selection:bg-fuchsia-200 selection:text-neutral-900">
+<div id="app">
+  <div class="fixed left-0 top-0 h-1 bg-fuchsia-500 z-50" :style="{ width: scrollProgress + '%' }"></div>
+  <main class="min-h-screen grid lg:grid-cols-2">
+    <section class="relative h-[48vh] lg:h-auto lg:min-h-screen overflow-hidden">
+      <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="w-full h-full border-2 border-neutral-200 rounded-xl overflow-hidden bg-neutral-100">
+          <img v-show="imageLoaded" @load="onLoaded" :src="gothic.JPEG" alt="Gallery image" class="w-full h-full object-cover"/>
+          <div v-show="!imageLoaded" class="w-full h-full animate-pulse"></div>
+        </div>
+      </div>
+      <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
+        <div class="flex gap-2 overflow-x-auto scrollbar-none">
+          <button v-for="(src, i) in images" :key="i" @click="selectImage(i)" class="relative shrink-0 w-20 h-16 rounded-md overflow-hidden ring-2" :class="i===currentIndex ? 'ring-fuchsia-500' : 'ring-transparent'">
+            <img :src="src" class="w-full h-full object-cover" alt="thumb"/>
+          </button>
+        </div>
+      </div>
+    </section>
+    <section class="px-6 lg:px-16 py-10 lg:py-16 flex items-start justify-center">
+      <div class="w-full measure">
+        <h1 class="text-3xl md:text-4xl font-semibold tracking-tight text-fuchsia-700">{{ content.title }}</h1>
+        <blockquote class="mt-6 pl-4 border-l-4 border-fuchsia-500/60 text-neutral-700 italic">“{{ content.quote }}”</blockquote>
+        <transition-group name="fade" tag="div" class="mt-6 space-y-5">
+          <p v-for="(p, i) in content.paragraphs" :key="i" class="leading-relaxed text-neutral-800">{{ p }}</p>
+        </transition-group>
+        <div class="mt-10">
+          <button @click="nextImage" class="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-fuchsia-600 text-white hover:bg-fuchsia-700 focus:outline-none focus:ring-2 focus:ring-fuchsia-400">
+            Next photograph
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5"><path fill="currentColor" d="M9 5l7 7-7 7v-4H3v-6h6V5z"/></svg>
+          </button>
+        </div>
+        <footer class="mt-6 text-xs text-neutral-500">© {{ year }} NeoGenesis. Built with Vue + Tailwind.</footer>
+      </div>
+    </section>
+  </main>
+</div>
+<script>
+const { createApp } = Vue;
+createApp({
+  data() {
+    return {
+      content: {
+        title: 'NeoGenesis',
+        quote: 'We know the world by what we see: through a window, in a frame, on a screen. — Anne Friedberg.',
+        paragraphs: [
+          'My concept for this project was under the umbrella of Simulacra as described by Jean Baudrillard. This project explores the relationship between the human body and computerised technologies. In a technologically attuned civilisation we are surrounded by computer technology which augments the human body.',
+          'A human body with powers beyond its natural form serves as a prosthetic enhancement of its faculties.',
+          'Neogenesis explores concepts of “The Cyborg” as theorised by Donna Haraway and the implications of computerised technology on human embodiment and subjectivity, and also seeks to understand notions of human experience as mediated through technology.',
+          'I approached this project with the idea of attempting to depict the symbiotic relationship between humans and technology, in particular “Cyborg Intentionality” as described by Don Ihde.',
+          'As our realities become ever more digital, and our experiences become simulated, what does “real” even mean anymore and how does that affect our relationship with ourselves and each other?',
+          'Will we succumb to virtual reality worlds as post-humans similar to the figures in the Wachowskis’ Matrix saga, or eschew the human body in favour of cybernetic super‑enhancement as seen in Ghost in the Shell and Deus Ex?'
+        ]
+      },
+      images: [
+        'assets/neogenesis.jpg',
+        'assets/neogenesis-02.jpg',
+        'assets/neogenesis-03.jpg'
+      ],
+      currentIndex: 0,
+      imageLoaded: false,
+      scrollProgress: 0,
+      year: new Date().getFullYear()
+    }
+  },
+  computed: {
+    currentSrc() { return this.images[this.currentIndex]; }
+  },
+  methods: {
+    selectImage(i) { if (i>=0 && i<this.images.length) { this.currentIndex = i; this.imageLoaded = false; } },
+    nextImage() { this.currentIndex = (this.currentIndex + 1) % this.images.length; this.imageLoaded = false; },
+    onLoaded() { this.imageLoaded = true; },
+    handleScroll() {
+      const scrolled = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      this.scrollProgress = Math.min(100, Math.max(0, (scrolled / docHeight) * 100));
+    }
+  },
+  mounted() {
+    this.handleScroll();
+    window.addEventListener('scroll', this.handleScroll, { passive: true });
+  },
+  unmounted() {
+    window.removeEventListener('scroll', this.handleScroll);
+  }
+}).mount('#app');
+</script>
+</body>
+</html>

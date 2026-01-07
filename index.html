@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Michel Valeta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.04), transparent 60%),
+        #020617;
+    }
+
+    /* ===== Stage ===== */
+    .stage {
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(22px);
+    }
+
+    /* ===== Slices ===== */
+    .slice {
+      position: absolute;
+      inset: 0;
+      cursor: pointer;
+      transition:
+        clip-path 0.9s cubic-bezier(.2,.8,.2,1),
+        filter 0.7s ease,
+        opacity 0.7s ease;
+    }
+
+    .slice img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition:
+        transform 1.2s cubic-bezier(.2,.8,.2,1),
+        filter 0.8s ease;
+    }
+
+    .slice:hover img {
+      transform: scale(1.03);
+    }
+
+    /* ===== Equi-distant default geometry ===== */
+    .photo {
+      clip-path: polygon(0 0, 48% 0, 33% 100%, 0 100%);
+      z-index: 3;
+    }
+
+    .film {
+      clip-path: polygon(32% 0, 68% 0, 53% 100%, 17% 100%);
+      z-index: 2;
+    }
+
+    .threed {
+      clip-path: polygon(67% 0, 100% 0, 100% 100%, 52% 100%);
+      z-index: 1;
+    }
+
+    /* ===== Page-load balance ===== */
+    .slice.film img {
+      filter: brightness(0.85) saturate(0.9);
+    }
+
+    .inactive {
+      filter: blur(10px) grayscale(80%);
+      opacity: 0.45;
+    }
+
+    /* ===== Labels ===== */
+    .label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      letter-spacing: 0.28em;
+      font-weight: 500;
+      color: white;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0;
+      text-shadow:
+        0 0 12px rgba(255,255,255,0.35),
+        0 0 28px rgba(120,180,255,0.25);
+      animation: labelIn 0.6s ease forwards;
+      animation-delay: 0.35s;
+    }
+
+    /* 🔹 MOVE PHOTO TEXT LEFT */
+    .slice.photo .label {
+      transform: translateX(-200px);
+    }
+
+    /* Extra authority for 3D */
+    .slice.threed .label {
+      text-shadow:
+        0 0 14px rgba(180,220,255,0.45),
+        0 0 36px rgba(100,180,255,0.35);
+    }
+
+    @keyframes labelIn {
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center text-white antialiased">
+
+  <div class="w-[92vw] max-w-6xl">
+
+    <!-- Header -->
+    <div class="flex items-center mb-6">
+      <a href="/" class="w-10 h-10 border border-white/30 rounded flex items-center justify-center mr-4">
+        ▲
+      </a>
+      <h1 class="text-2xl tracking-[0.3em] font-light">MICHEL VALETA</h1>
+    </div>
+
+    <!-- Image Stage -->
+    <div class="stage relative h-[52vh] rounded-2xl border border-white/20 bg-white/5">
+
+      <!-- PHOTO -->
+      <a href="/photo" class="slice photo" data-slice data-key="photo">
+        <img src="/assets/Mind_Body.jpg" />
+        <div class="label">Photo</div>
+      </a>
+
+      <!-- FILM -->
+      <a href="/film" class="slice film" data-slice data-key="film">
+        <img src="/assets/neogenesis.jpg" />
+        <div class="label">Film</div>
+      </a>
+
+      <!-- 3D -->
+      <a href="/3d" class="slice threed" data-slice data-key="threed">
+        <img src="/assets/terminal_v6.jpg" />
+        <div class="label">3D</div>
+      </a>
+
+    </div>
+  </div>
+
+  <script>
+    const slices = document.querySelectorAll('[data-slice]');
+
+    const defaultClips = {
+      photo: 'polygon(0 0, 48% 0, 33% 100%, 0 100%)',
+      film:  'polygon(32% 0, 68% 0, 53% 100%, 17% 100%)',
+      threed:'polygon(67% 0, 100% 0, 100% 100%, 52% 100%)'
+    };
+
+    const hoverStates = {
+      photo: {
+        photo: 'polygon(0 0, 62% 0, 47% 100%, 0 100%)',
+        film:  'polygon(46% 0, 76% 0, 61% 100%, 31% 100%)',
+        threed:'polygon(74% 0, 100% 0, 100% 100%, 59% 100%)'
+      },
+      film: {
+        photo: 'polygon(0 0, 40% 0, 25% 100%, 0 100%)',
+        film:  'polygon(24% 0, 76% 0, 61% 100%, 9% 100%)',
+        threed:'polygon(60% 0, 100% 0, 100% 100%, 45% 100%)'
+      },
+      threed: {
+        photo: 'polygon(0 0, 38% 0, 23% 100%, 0 100%)',
+        film:  'polygon(22% 0, 54% 0, 39% 100%, 7% 100%)',
+        threed:'polygon(52% 0, 100% 0, 100% 100%, 37% 100%)'
+      }
+    };
+
+    slices.forEach(active => {
+      const activeKey = active.dataset.key;
+
+      active.addEventListener('mouseenter', () => {
+        slices.forEach(s => {
+          const key = s.dataset.key;
+          s.style.clipPath = hoverStates[activeKey][key];
+          if (s !== active) s.classList.add('inactive');
+          else s.querySelector('img').style.filter = 'none';
+        });
+      });
+
+      active.addEventListener('mouseleave', () => {
+        slices.forEach(s => {
+          const key = s.dataset.key;
+          s.style.clipPath = defaultClips[key];
+          s.classList.remove('inactive');
+
+          if (key === 'film') {
+            s.querySelector('img').style.filter = 'brightness(0.85) saturate(0.9)';
+          }
+        });
+      });
+
+      active.addEventListener('click', e => {
+        e.preventDefault();
+        const href = active.getAttribute('href');
+
+        slices.forEach(s => {
+          if (s !== active) {
+            s.style.opacity = '0';
+          } else {
+            s.style.clipPath = 'polygon(0 0,100% 0,100% 100%,0 100%)';
+          }
+        });
+
+        setTimeout(() => {
+          window.location.href = href;
+        }, 750);
+      });
+    });
+  </script>
+
+</body>
+</html>

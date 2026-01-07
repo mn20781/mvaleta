@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NeoGenesis — Prints</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            glow: '#6ee7f9'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background: radial-gradient(
+        ellipse at top,
+        #0f172a 0%,
+        #020617 45%,
+        #000000 100%
+      );
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+  </style>
+</head>
+
+<body class="text-neutral-100 antialiased">
+
+  <!-- Header -->
+  <header class="max-w-7xl mx-auto px-6 pt-20 pb-16">
+    <h1 class="text-3xl md:text-4xl font-light tracking-wide">
+      Michel Valeta — Prints
+    </h1>
+    <p class="mt-4 max-w-xl text-neutral-400 text-sm leading-relaxed">
+      Limited photographic works exploring the boundary between embodiment,
+      simulation, and technological presence.
+    </p>
+  </header>
+
+  <!-- Grid -->
+  <main class="max-w-7xl mx-auto px-6 pb-32">
+    <div id="printsGrid"
+         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+    </div>
+  </main>
+
+  <!-- Fullscreen Viewer -->
+  <div id="viewer"
+       class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50">
+
+    <button onclick="closeViewer()"
+            class="absolute top-6 right-6 text-neutral-400 hover:text-white text-sm">
+      Close
+    </button>
+
+    <img id="viewerImage"
+         class="max-h-[90vh] max-w-[90vw] object-contain rounded-lg" />
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center text-xs text-neutral-600 pb-12">
+    © 2026 Michel Valeta
+  </footer>
+
+  <!-- Script -->
+  <script>
+    const prints = [
+      {
+        title: "Terminal",
+        image: "/assets/terminal_v6.jpg"
+      },
+      {
+        title: "Neogenesis",
+        image: "/assets/neogenesis.jpg"
+      },
+      // add more works here
+    ];
+
+    const grid = document.getElementById("printsGrid");
+
+    prints.forEach(print => {
+      const card = document.createElement("div");
+      card.className = "group";
+
+      card.innerHTML = `
+        <div class="glass rounded-2xl overflow-hidden cursor-zoom-in"
+             onclick="openViewer('${print.image}')">
+          <img src="${print.image}"
+               alt="${print.title}"
+               class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
+        </div>
+
+        <div class="mt-4 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm tracking-wide">${print.title}</h2>
+            <p class="text-xs text-neutral-500 mt-1">
+              Archival pigment print
+            </p>
+          </div>
+
+          <a href="#"
+             class="text-xs tracking-wide text-glow border border-glow/40 rounded-full px-4 py-1.5
+                    hover:bg-glow/10 transition">
+            Buy print
+          </a>
+        </div>
+      `;
+
+      grid.appendChild(card);
+    });
+
+    function openViewer(src) {
+      const viewer = document.getElementById("viewer");
+      const img = document.getElementById("viewerImage");
+      img.src = src;
+      viewer.classList.remove("hidden");
+      viewer.classList.add("flex");
+    }
+
+    function closeViewer() {
+      const viewer = document.getElementById("viewer");
+      viewer.classList.add("hidden");
+      viewer.classList.remove("flex");
+    }
+  </script>
+
+</body>
+</html>
